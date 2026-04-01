@@ -1,0 +1,41 @@
+name: Deploy to Vercel
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_VERCEL: ${{ secrets.VERCEL_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        if: env.HAS_VERCEL == 'true'
+        run: npm install --global vercel@latest
+
+      - name: Link to provisioned Vercel project
+        if: env.HAS_VERCEL == 'true'
+        env:
+          ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          mkdir -p project/.vercel
+          printf '{"orgId":"%s","projectId":"%s"}' "$ORG_ID" "$PROJECT_ID" > project/.vercel/project.json
+
+      - name: Pull Vercel environment
+        if: env.HAS_VERCEL == 'true'
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }} --cwd project/
+
+      - name: Build project
+        if: env.HAS_VERCEL == 'true'
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }} --cwd project/
+
+      - name: Deploy to Vercel
+        if: env.HAS_VERCEL == 'true'
+        id: deploy
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} --cwd project/
