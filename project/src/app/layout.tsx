@@ -1,13 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
   title: 'PhotoBuddy - AI-Powered Photo Sharing',
-  description: 'Share your photography and get AI-powered feedback, editing suggestions, and creative insights. Connect with photographers worldwide.',
-  keywords: 'photography, photo sharing, AI editing, photo feedback, photographer community',
+  description: 'Share your photos and let AI help you create amazing content. Get feedback, editing suggestions, and auto-tags for your photography.',
+  keywords: 'photography, AI, photo sharing, editing, social media',
 }
 
 export default function RootLayout({
@@ -16,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className={inter.className}>{children}</body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   )
 }
